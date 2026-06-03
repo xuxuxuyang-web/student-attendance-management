@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>考勤统计 - 学生考勤管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background-color: #f8f9fa; }
+        .stats-card { border-radius: 10px; padding: 20px; text-align: center; color: white; }
+        .stats-normal { background: linear-gradient(135deg, #28a745, #20c997); }
+        .stats-late { background: linear-gradient(135deg, #ffc107, #fd7e14); }
+        .stats-absent { background: linear-gradient(135deg, #dc3545, #c82333); }
+        .stats-total { background: linear-gradient(135deg, #17a2b8, #007bff); }
+        .stats-rate { background: linear-gradient(135deg, #6f42c1, #8b5cf6); }
+        .value { font-size: 28px; font-weight: bold; }
+        .label { font-size: 14px; opacity: 0.9; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="fas fa-chart-line"></i> 考勤统计</h2>
+
+    <!-- 统计卡片 -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stats-card stats-total">
+                <div class="value" th:text="${statistics != null ? statistics.totalCount : 0}">0</div>
+                <div class="label">总打卡次数</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card stats-normal">
+                <div class="value" th:text="${statistics != null ? statistics.normalCount : 0}">0</div>
+                <div class="label">正常打卡</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card stats-late">
+                <div class="value" th:text="${statistics != null ? statistics.lateCount : 0}">0</div>
+                <div class="label">迟到</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card stats-absent">
+                <div class="value" th:text="${statistics != null ? statistics.absentCount : 0}">0</div>
+                <div class="label">缺勤</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 出勤率卡片 -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="stats-card stats-rate">
+                <div class="value" th:text="${statistics != null ? statistics.attendanceRate : 0} + '%'">0%</div>
+                <div class="label">总出勤率</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card stats-total">
+                <div class="value" th:text="${statistics != null ? statistics.weekCount : 0}">0</div>
+                <div class="label">本周打卡</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card stats-total">
+                <div class="value" th:text="${statistics != null ? statistics.monthCount : 0}">0</div>
+                <div class="label">本月打卡</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 本月详细统计 -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> 本月详细统计</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <h4>正常</h4>
+                            <h3 class="text-success" th:text="${statistics != null ? statistics.monthNormalCount : 0}">0</h3>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h4>迟到</h4>
+                            <h3 class="text-warning" th:text="${statistics != null ? statistics.monthLateCount : 0}">0</h3>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h4>缺勤</h4>
+                            <h3 class="text-danger" th:text="${statistics != null ? statistics.monthAbsentCount : 0}">0</h3>
+                        </div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <h5>本月出勤率：<strong th:text="${statistics != null ? statistics.monthAttendanceRate : 0} + '%'">0%</strong></h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 今日统计 -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-calendar-day"></i> 今日统计</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr><td>今日总打卡</td><td><strong th:text="${todayCount != null ? todayCount : 0}">0</strong> 次</td></tr>
+                        <tr><td>今日正常</td><td><strong th:text="${todayNormal != null ? todayNormal : 0}">0</strong> 次</td></tr>
+                        <tr><td>今日迟到</td><td><strong th:text="${todayLate != null ? todayLate : 0}">0</strong> 次</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> 出勤分布</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="statusChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 教师统计（仅教师可见） -->
+    <div th:if="${isTeacher}" class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-chalkboard"></i> 班级整体统计</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr><th>学生姓名</th><th>总打卡</th><th>正常</th><th>迟到</th><th>缺勤</th><th>出勤率</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="stat : ${classStats}">
+                                <td th:text="${stat[0]}">-</td>
+                                <td th:text="${stat[1]}">0</td>
+                                <td th:text="${stat[2]}">0</td>
+                                <td th:text="${stat[3]}">0</td>
+                                <td th:text="${stat[4]}">0</td>
+                                <td th:text="${#numbers.formatDecimal((stat[2] * 100.0 / stat[1]), 1, 1)} + '%'">0%</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-3">
+        <a th:href="@{/attendance/import}" class="btn btn-primary">
+            <i class="fas fa-upload"></i> 批量导入
+        </a>
+        <a th:href="@{/attendance/list}" class="btn btn-secondary">
+            <i class="fas fa-list"></i> 查看记录
+        </a>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /* <![CDATA[ */
+    var normalCount = /*[[${statistics != null ? statistics.normalCount : 0}]]*/ 0;
+    var lateCount = /*[[${statistics != null ? statistics.lateCount : 0}]]*/ 0;
+    var absentCount = /*[[${statistics != null ? statistics.absentCount : 0}]]*/ 0;
+    /* ]]> */
+
+    const ctx = document.getElementById('statusChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['正常', '迟到', '缺勤'],
+            datasets: [{
+                data: [normalCount, lateCount, absentCount],
+                backgroundColor: ['#28a745', '#ffc107', '#dc3545']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+</script>
+</body>
+</html>

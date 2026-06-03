@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary" th:fragment="navbar">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/dashboard}">学生考勤系统</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/dashboard}">仪表盘</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/attendance/checkIn}">考勤打卡</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/attendance/list}">考勤记录</a></li>
+                <li class="nav-item" th:if="${isTeacher}">
+                    <a class="nav-link" th:href="@{/attendance/import}">批量导入</a>
+                </li>
+                <li class="nav-item" th:if="${isTeacher}">
+                    <a class="nav-link" th:href="@{/attendance/statistics}">考勤统计</a>
+                </li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/student/list}">学生管理</a></li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" th:href="@{/logout}">退出</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

@@ -1,4 +1,4 @@
-package com.example.attendance;
+package com.example.attendance.common;
 
 // 1. 按照课程要求：定义统一响应格式
 public class Result<T> {

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>考勤打卡 - 学生考勤管理系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { border-radius: 15px; box-shadow: 0 0 30px rgba(0,0,0,0.1); }
+        .current-time { font-size: 28px; font-weight: bold; color: #0d6efd; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/navbar :: navbar}"></div>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div th:if="${success}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
+            </div>
+            <div th:if="${error}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+            </div>
+            <div th:if="${warning}" class="alert alert-warning">
+                <i class="fas fa-clock"></i> <span th:text="${warning}"></span>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0"><i class="fas fa-fingerprint"></i> 考勤打卡</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <div class="current-time" th:text="${currentTime}"></div>
+                        <small class="text-muted">当前时间自动获取</small>
+                    </div>
+
+                    <form th:action="@{/attendance/checkIn}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fas fa-book"></i> 选择课程：</label>
+                            <select class="form-select" name="courseId" required>
+                                <option value="">请选择课程</option>
+                                <option th:each="course : ${courses}" th:value="${course.id}"
+                                        th:text="${course.name + ' - ' + course.teacher}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fas fa-calendar-alt"></i> 打卡日期：</label>
+                            <input type="text" class="form-control" th:value="${currentDate}" readonly disabled>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fas fa-sticky-note"></i> 备注：</label>
+                            <textarea class="form-control" name="remark" rows="3" placeholder="请输入备注信息（可选）"></textarea>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> 温馨提示：课程开始后30分钟内打卡为正常，超过30分钟记为迟到。
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/attendance/list}" class="btn btn-secondary">
+                                <i class="fas fa-list"></i> 查看记录
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-check-circle"></i> 提交打卡
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

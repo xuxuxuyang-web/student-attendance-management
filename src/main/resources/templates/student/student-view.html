@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生详情 - [[${student.name}]]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .detail-container {
+            max-width: 800px;
+            margin: 50px auto;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .info-row {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="detail-container">
+        <div class="card shadow">
+            <div class="card-header">
+                <h3 class="mb-0">
+                    <i class="fas fa-user-graduate"></i> 学生详细信息
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="info-row row">
+                            <div class="col-md-3 info-label">学号：</div>
+                            <div class="col-md-9" th:text="${student.studentNo}">2023001001</div>
+                        </div>
+                        <div class="info-row row">
+                            <div class="col-md-3 info-label">姓名：</div>
+                            <div class="col-md-9" th:text="${student.name}">张三</div>
+                        </div>
+                        <div class="info-row row">
+                            <div class="col-md-3 info-label">性别：</div>
+                            <div class="col-md-9">
+                                <span th:if="${student.gender == '男'}" class="badge bg-primary">男</span>
+                                <span th:if="${student.gender == '女'}" class="badge bg-danger">女</span>
+                                <span th:if="${student.gender == null}" class="badge bg-secondary">未设置</span>
+                            </div>
+                        </div>
+                        <div class="info-row row">
+                            <div class="col-md-3 info-label">班级：</div>
+                            <div class="col-md-9" th:text="${student.className}">软件工程1班</div>
+                        </div>
+                        <div class="info-row row">
+                            <div class="col-md-3 info-label">出生日期：</div>
+                            <div class="col-md-9" th:text="${#temporals.format(student.birthDate, 'yyyy年MM月dd日')}">2000年01月01日</div>
+                        </div>
+                        <div class="info-row row">
+                            <div class="col-md-3 info-label">联系方式：</div>
+                            <div class="col-md-9" th:text="${student.phone != null ? student.phone : '未填写'}">13800138000</div>
+                        </div>
+                        <div class="info-row row">
+                            <div class="col-md-3 info-label">邮箱：</div>
+                            <div class="col-md-9" th:text="${student.email != null ? student.email : '未填写'}">zhangsan@example.com</div>
+                        </div>
+                        <div class="info-row row">
+                            <div class="col-md-3 info-label">家庭地址：</div>
+                            <div class="col-md-9" th:text="${student.address != null ? student.address : '未填写'}">北京市海淀区</div>
+                        </div>
+                        <div class="info-row row">
+                            <div class="col-md-3 info-label">创建时间：</div>
+                            <div class="col-md-9" th:text="${#temporals.format(student.createTime, 'yyyy-MM-dd HH:mm:ss')}">2024-01-01 10:00:00</div>
+                        </div>
+                        <div class="info-row row">
+                            <div class="col-md-3 info-label">更新时间：</div>
+                            <div class="col-md-9" th:text="${#temporals.format(student.updateTime, 'yyyy-MM-dd HH:mm:ss')}">2024-01-01 10:00:00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <a th:href="@{/student/list}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> 返回列表
+                </a>
+                <a th:href="@{/student/edit/{id}(id=${student.id})}" class="btn btn-warning">
+                    <i class="fas fa-edit"></i> 编辑信息
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
